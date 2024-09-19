@@ -10,3 +10,5 @@ C. Please supply your OpenAI Key at https://platform.openai.com, This will only 
 
 D. You are allow to use file above for controlled environment.
 
+Enjoy the using the model creating and hopefully V3 coming up soon! Feel free to contact me at @gooodkung in discord for more information.
+
