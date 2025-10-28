@@ -2,6 +2,7 @@
 GK_Altrist_V3_GitHubReady
 
 Created by Ratanapara Choorat, Goood
+Since 2024-06-15
 
 This is the replica file from my own Project named "Altrist", This is third iteration of the project here, and this is the main loop file, check api_handler and file_processing to see the behind the scenes
 
@@ -22,20 +23,17 @@ from gk_file_processing import (
     encode_image
 )
 from gk_api_handler import (
-    create_index_if_not_exists,
     index_pdf_files,
     process_pdf_query,
     process_image_query,
     extract_plaintext_from_claude,
     anthropic_client,
-    pinecone_client
 )
 
 # Load dotenv (.env) variable to the project, which contains all the API key we need to run the code
-load_dotenv("/workspaces/47936376/GK_Altrist_Python/.env")
+load_dotenv(".env")
 
 # Global variable declared here
-index = None
 current_file_path = None
 file_type = None
 
@@ -43,8 +41,8 @@ file_type = None
 This is the section where all the file is check whether it's PDF or Image or None of the above
 
 """
-def process_file(file_path, index_name='gdk-l1m-pdf', dimension=384):
-    global index, file_type
+def process_file(file_path):
+    global file_type
     # We run the Check file type to determine what user added to the code and return the value to file_type
     file_type = check_file_type(file_path)
 
@@ -54,17 +52,14 @@ def process_file(file_path, index_name='gdk-l1m-pdf', dimension=384):
         return "unsupported", None, None
     elif file_type == "pdf":
         try:
-            # Create index if it doesn't exist
-            index = create_index_if_not_exists(index_name, dimension)
-
             # Process PDF
             pages = extract_text_from_pdf(file_path)
             data = prep_data_for_upsert(pages, file_path)
 
             # Index the PDF file
-            index_pdf_files(index, [file_path], index_name)
+            index_pdf_files([file_path])
 
-            return "pdf", index, None
+            return "pdf", None, None
         except Exception as e:
             print(f"Error processing PDF file: {str(e)}")
             return "error", None, None
@@ -83,7 +78,7 @@ def process_file(file_path, index_name='gdk-l1m-pdf', dimension=384):
 
 def main():
     # We declared the variable we declared above and make sure it's universal to every code we do here
-    global current_file_path, file_type, index
+    global current_file_path, file_type
 
     print("\nWelcome to Altrist, The Friendly and Helpful Chat System to assist you with Image and PDF file!")
     print("Type 'Exit' at any point of this program to exit from the program when finish using")
@@ -99,7 +94,7 @@ def main():
                 break
 
             # We have 3 new variable that we will be using according to process_file function, currently third one is redundant but kept for future use
-            result, new_index, _ = process_file(file_path)
+            result, _, _ = process_file(file_path)
 
             # We will check the result from the provided code above, we want to make sure that the file is upload properly, otherwise flag an error to user for basic error handling
             if result == "not_found":
@@ -108,10 +103,8 @@ def main():
                 print("File Not Supported. Please upload a File that ends with .pdf or any image file type like (.png or .jpg)")
             elif result == "pdf":
                 current_file_path = file_path
-                index = new_index
                 file_type = "pdf"
-                print("PDF index created, ready to query and process")
-                # print(f"Debug: Final index value = {index}")  # Debug print
+                print("PDF ready to query and process")
             elif result == "image":
                 current_file_path = file_path
                 file_type = "image"
@@ -133,7 +126,6 @@ def main():
                 # We want to make it blank so it doesn't conflict with the current information from before
                 current_file_path = None
                 file_type = None
-                index = None
                 continue
 
             """
@@ -145,13 +137,7 @@ def main():
             """
 
             if file_type == "pdf":
-                if index is None:
-                    # This error flags on certain condition, usually during the file upload process for first time is blank due to the same index from first time
-                    print("Error to process with the index: PDF index not initialized. Please check your pinecone whether there's already created index,\n delete existing index and then upload the PDF File again")
-                    current_file_path = None
-                    continue
-                # Call the pdf processing to get the final response
-                result = process_pdf_query(query, index, anthropic_client)
+                result = process_pdf_query(query, anthropic_client)
             elif file_type == "image":
                 # Read the image file content
                 with open(current_file_path, 'rb') as image_file:
@@ -170,8 +156,6 @@ def main():
             # We want to make sure that we got plain text response from Claude, so we will run this function to polish and make sure about it
             plaintext_response = extract_plaintext_from_claude(result)
             print("\nResult:", plaintext_response)
-
-        # print(f"Debug: Final index value = {index}")  # Debug print
 
 if __name__ == "__main__":
     main()
