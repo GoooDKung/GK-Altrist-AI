@@ -1,0 +1,18 @@
+# .gitignore
+
+# Ignore all .env files
+*.env
+
+# Ignore environment folders
+venv/
+.venv/
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+
+# Ignore Contents of the Upload Folder
+/uploads/*
+
+# Keep folders intact
+!/uploads/.gitkeep

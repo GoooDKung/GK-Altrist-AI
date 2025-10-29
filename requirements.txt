@@ -1,0 +1,12 @@
+anthropic
+pymupdf
+nltk
+Pillow
+python-dotenv
+transformers
+torchvision
+langchain
+chromadb
+tiktoken
+sentence-transformers
+importlib-metadata==6.8.0

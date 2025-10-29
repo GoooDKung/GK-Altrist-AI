@@ -4,7 +4,6 @@ import fitz
 import nltk
 import base64
 import os
-
 from PIL import Image
 from sentence_transformers import SentenceTransformer
 
