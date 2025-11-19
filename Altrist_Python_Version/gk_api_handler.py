@@ -1,3 +1,14 @@
+"""
+GK_Altrist_V3_GitHubReady
+
+Created by Ratanapara Choorat, Goood
+Since 2024-06-15
+
+This is the replica file from my own Project named "Altrist", This is third iteration of the project here, and this is the API Handler file.
+
+What it is? a file manages the backend logic for the AI and Database connections. It handles the indexing of documents into ChromaDB, retrieving relevant information (RAG) using vector search, and sending the final prompts to Anthropic's Claude for both text and image analysis.
+"""
+
 # Import necessary library for this section of the code
 from importlib import metadata
 from anthropic import Anthropic

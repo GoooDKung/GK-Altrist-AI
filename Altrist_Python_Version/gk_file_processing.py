@@ -1,3 +1,14 @@
+"""
+GK_Altrist_V3_GitHubReady
+
+Created by Ratanapara Choorat, Goood
+Since 2024-06-15
+
+This is the replica file from my own Project named "Altrist", This is third iteration of the project here, and this is the File Processing file.
+
+What it is? a file contains the utility functions to prepare your data. It handles detecting file types, extracting text from PDFs using PyMuPDF, chunking text for the database, and encoding images or embeddings so they are ready for the API handler.
+"""
+
 
 # Import necessary library for File_Processing
 import fitz
